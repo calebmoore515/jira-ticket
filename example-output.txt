@@ -1,0 +1,79 @@
+Initiating Taxi Automation
+
+There are currently 6 tickets in the queue, does this match the number counted in BK Taxo Script? (Y/N): y
+
+Sweet, proceeding with automation
+
+Is Whitelisting Required (Y/N): n
+What is the PID (comma delimited if multiple - N/A if null): n/a
+
+Last chance to exit before writing to Jira
+Is the info above correct? (Y/N): y
+
+Creating the ticket now
+
+Congrats, you have created TAXONOMY-12345
+Assigning it to Campaign Fulfillment
+Ticket successfully assigned
+
+If there was whitelisting involved then you need to manually provide sample paths in ticket!
+
+You have created a taxonomy ticket! Do you want to continue and link issues? (Y/N): y
+
+Linking tickets now
+
+Linked the following issues to: https://jira.server.com/browse/TAXONOMY-1234
+
+https://jira.server.com/browse/CAM-1234
+https://jira.server.com/browse/CAM-4567
+https://jira.server.com/browse/CAM-5678
+https://jira.server.com/browse/CAM-6789
+https://jira.server.com/browse/CAM-7890
+https://jira.server.com/browse/CAM-8900
+
+6 strategies linked!
+
+You linked the strategies! Do you want to continue and attach the taxo doc? (Y/N): y
+
+Attaching doc from ZFS now
+
+Is this today's date: 20210112
+Was this Monday's date: 20210111
+Y/N: y
+
+Phew, everything is working properly
+
+You attached to taxonomy document! Would you like to close the fulfillment tickets? (Y/N): y
+
+Closing fulfillment tickets now
+
+https://jira.server.com/browse/CAM-1234
+Transitioned to Waiting for Metadata
+Transitioned to Complete
+https://jira.server.com/browse/CAM-2345
+Transitioned to Waiting for Metadata
+Transitioned to Complete
+https://jira.server.com/browse/CAM-5678
+Transitioned to Waiting for Metadata
+Transitioned to Complete
+https://jira.server.com/browse/CAM-6789
+Transitioned to Waiting for Metadata
+Transitioned to Complete
+https://jira.server.com/browse/CAM-7890
+Transitioned to Waiting for Metadata
+Transitioned to Complete
+https://jira.server.com/browse/CAM-8900
+Transitioned to Waiting for Metadata
+Transitioned to Complete
+
+6 fulfillment tickets closed!
+
+Removing labels - This can take up to a minute
+Removed 6 labels
+
+You have completed DLX Custom taxonomy
+Remember, if there was whitelisting involved then you need to manually provide sample paths in ticket!
+
+PID: Datalogix Private > New Node Name
+
+Process finished with exit code 0
