@@ -29,19 +29,19 @@ options = {'server': 'server_address.com'}
 jira = JIRA(options, basic_auth=('username', 'pass'))
 # </editor-fold>
 
+#JQL used to identify target tickets 
+
 issues_in_proj = jira.search_issues('project = CAM AND issuetype in ("Fulfillment Metadata Issue") '
                                     'AND status = Open AND cf[12345] ~ BlueKai AND "Fulfill Channel ID" ~ 585 '
                                     'AND labels = "cf"', maxResults=50)
-
-# This API call is used to remove the label from the ticket. We have moved away from labels, so we don't want to leave
-# them on tickets. They should only be present during taxonomy creation
 
 print('Initiating Taxi Automation\n')
 
 no_sync = []
 issues_in_proj_sync = []
-
 listed = []
+
+#This loop filters tickets based on a boolean field in Jira. Determines if data needs to be synced to additional component.
 
 for issue in issues_in_proj:
     if "Branded" in issue.raw['fields']['summary']:
@@ -50,6 +50,8 @@ for issue in issues_in_proj:
         check_count += 1
     elif issue.fields.customfield_17027 == 'false':
         check_count += 1
+
+#QC step for the user, allows them to verify everything is functioning as expected. Basic error handling built in        
 
 check_input = str(input('There are currently ' + str(check_count) + ' tickets in the queue, does this match the '
                                                                     'number counted in BK Taxo Script? (Y/N): '))
@@ -64,6 +66,8 @@ else:
     print('\nInvalid input, re-run program\n')
     sys.exit(0)
 
+#User input required to help populate the description field in the newly created ticket    
+
 whitelist_req = str(input('Is Whitelisting Required (Y/N): '))
 pid = str(input('What is the PID (comma delimited if multiple - N/A if null): '))
 
@@ -75,6 +79,8 @@ if create_y_n.lower() == 'y':
 elif create_y_n.lower() == 'n':
     print('\nExiting program, no ticket has been created\n')
     sys.exit(0)
+
+#Creating ticket - Date, PID, and whitelist req are all dynamic fields     
 
 title = 'New DLX Custom Categories ' + str(datetime.date.today())
 
@@ -105,6 +111,8 @@ print('Congrats, you have created ' + str(new_issue))
 
 print('Assigning it to Campaign Fulfillment')
 
+#Routes ticket to proper team 
+
 jira.assign_issue(new_issue, 'campaignfulfillment')
 
 print('Ticket successfully assigned\n')
@@ -127,10 +135,9 @@ taxo_issue = jira.issue(new_issue)
 
 print('Linked the following issues to: https://jira.server.com/browse/' + str(new_issue) + '\n')
 
+#Links all sub issues to the newly created parent issue
+
 for issue in issues_in_proj:
-    if "Branded" in issue.raw['fields']['summary']:
-        no_sync.append(issue)
-    else:
         strategy = jira.search_issues('issue in linkedIssues(' + str(issue) + ', "Strategy") AND status in (Audience, '
                                                                               '"Scorecard Approval", "Post Processing")')
         issues_in_proj_sync.append(str(issue))
@@ -155,11 +162,13 @@ else:
 
 today_1 = datetime.date.today()
 d = ((today_1) - datetime.timedelta(days=today_1.weekday()))
-formatted_date = d.strftime("%Y%m%d")
+monday_date = d.strftime("%Y%m%d")
 today = (time.strftime('%Y%m%d'))
 
+#QC Step for user, ensures file naming convention is correct
+
 print("Is this today's date: " + today)
-print("Was this Monday's date: " + formatted_date)
+print("Was this Monday's date: " + monday_date)
 user_input = str(input('Y/N: '))
 
 if user_input.lower() == 'y':
@@ -171,7 +180,7 @@ else:
     print('\nInvalid input, manually complete or run modular scripts\n')
     sys.exit(0)
 
-# Must be logged into ZFS in file explorer
+# Must be logged into ZFS in file explorer, file path is dynamic based on date
 path = '//zfs1/Operations/Audience_Ops/DLX Customs/' + str(formatted_date) + '/DLX Customs Update ' + str(today) + '.csv'
 
 jira.add_attachment(issue=new_issue, attachment=path)
@@ -187,10 +196,9 @@ else:
     print('\nInvalid input, manually complete or run modular scripts\n')
     sys.exit(0)
 
+#Hits Jira API to transition all sub tickets to intermediate stage and the closed stage
+    
 for issue in issues_in_proj:
-    if "Branded" in issue.raw['fields']['summary']:
-        no_sync.append(issue)
-    else:
         print('https://jira.server.com/browse/' + str(issue))
         jira.transition_issue(issue, transition='55')
         print('Transitioned to Waiting for Metadata')
@@ -200,17 +208,24 @@ for issue in issues_in_proj:
 
 print('\n' + str(count1) + ' fulfillment tickets closed!')
 
+#Removes label used to query tickets. Purely cosmetic, but helps keep unnecessary info from staying on tickets
+
 issues_in_proj_1 = jira.search_issues('project = CAM AND issuetype in ("Fulfillment Metadata Issue") '
                                       'AND status = Complete AND cf[12345] ~ BlueKai AND "Fulfill Channel ID" ~ 585 '
                                       'AND labels = "cf"', maxResults=20)
 
 print('\nRemoving labels - This can take up to a minute')
 
+# This API call is used to remove the label from the ticket. We have moved away from labels, so we don't want to leave
+# them on tickets. They should only be present during taxonomy creation
+
 for issue in issues_in_proj_1:
     issue.update(fields={"labels": [' ']})
     lab_count += 1
 
 print('Removed ' + str(lab_count) + ' labels')
+
+#Final user instructions
 
 print('\nYou have completed DLX Custom taxonomy')
 print('Remember, if there was whitelisting involved then you need to manually provide sample paths in ticket!')
