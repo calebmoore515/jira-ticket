@@ -2,7 +2,7 @@
 
 #### Description
 
-This script interacts with the Jira API and the File Explorer. 
+This script interacts with the Jira API and the File Explorer. It is designed to be run after bk-sync.py, however it is capable of being run independently.
 
 Queries Jira to find all issues that fit pre-defined JQL, then links them to a newly created Jira issue. 
 Basic data metrics, such as number of tickets are returned so that user can ensure all data is being collected by script.
