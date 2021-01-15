@@ -39,6 +39,7 @@ Attaching doc from ZFS now
 
 Is this today's date: 20210112
 Was this Monday's date: 20210111
+Check against file naming conventions
 Y/N: y
 
 Phew, everything is working properly
