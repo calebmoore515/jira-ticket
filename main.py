@@ -31,8 +31,8 @@ jira = JIRA(options, basic_auth=('username', 'pass'))
 
 #JQL used to identify target tickets 
 
-issues_in_proj = jira.search_issues('project = CAM AND issuetype in ("Fulfillment Metadata Issue") '
-                                    'AND status = Open AND cf[12345] ~ BlueKai AND "Fulfill Channel ID" ~ 585 '
+issues_in_proj = jira.search_issues('project = ABC AND issuetype in ("Ticket Type") '
+                                    'AND status = Open AND cf[12345] ~ Platform AND "Fulfill Channel ID" ~ 123 '
                                     'AND labels = "cf"', maxResults=50)
 
 print('Initiating Taxi Automation\n')
@@ -46,9 +46,9 @@ listed = []
 for issue in issues_in_proj:
     if "Branded" in issue.raw['fields']['summary']:
         no_sync.append(issue)
-    elif issue.fields.customfield_17027 == 'true':
+    elif issue.fields.customfield_45678 == 'true':
         check_count += 1
-    elif issue.fields.customfield_17027 == 'false':
+    elif issue.fields.customfield_45678 == 'false':
         check_count += 1
 
 #QC step for the user, allows them to verify everything is functioning as expected. Basic error handling built in        
@@ -99,11 +99,11 @@ issue_dict = {
     'summary': title,
     'description': desc,
     'issuetype': {'name': 'Branded/PDM'},
-    'customfield_17611': [{"value": "Custom"}, {"value": "DLX"}],
-    'customfield_16014': 'All',
-    'customfield_16013': '1',
-    'customfield_11478': {"value": "Fulfillment"},
-    'customfield_16010': ['Datalogix']
+    'customfield_34567': [{"value": "Custom"}, {"value": "DLX"}],
+    'customfield_45678': 'All',
+    'customfield_56789': '1',
+    'customfield_67890': {"value": "Fulfillment"},
+    'customfield_78901': ['Datalogix']
 }
 new_issue = jira.create_issue(fields=issue_dict)
 
@@ -169,6 +169,7 @@ today = (time.strftime('%Y%m%d'))
 
 print("Is this today's date: " + today)
 print("Was this Monday's date: " + monday_date)
+print('Check against file naming conventions')
 user_input = str(input('Y/N: '))
 
 if user_input.lower() == 'y':
@@ -210,8 +211,8 @@ print('\n' + str(count1) + ' fulfillment tickets closed!')
 
 #Removes label used to query tickets. Purely cosmetic, but helps keep unnecessary info from staying on tickets
 
-issues_in_proj_1 = jira.search_issues('project = CAM AND issuetype in ("Fulfillment Metadata Issue") '
-                                      'AND status = Complete AND cf[12345] ~ BlueKai AND "Fulfill Channel ID" ~ 585 '
+issues_in_proj_1 = jira.search_issues('project = ABC AND issuetype in ("Ticket Type") '
+                                      'AND status = Complete AND cf[12345] ~ Platform AND "Fulfill Channel ID" ~ 123 '
                                       'AND labels = "cf"', maxResults=20)
 
 print('\nRemoving labels - This can take up to a minute')
